@@ -1,0 +1,27 @@
+service: shopman
+useDotenv: true
+frameworkVersion: '2'
+
+provider:
+  lambdaHashingVersion: 20201221
+  name: aws
+  runtime: nodejs14.x
+  region: ap-northeast-1
+  environment:
+    SLACK_SIGNING_SECRET: ${env:SLACK_SIGNING_SECRET}
+    SLACK_BOT_TOKEN: ${env:SLACK_BOT_TOKEN}
+    NOTION_TOKEN: ${env:NOTION_TOKEN}
+    DATABASE_ID: ${env:DATABASE_ID}
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+functions:
+  slack:
+    handler: dist/app.handler
+    events:
+      - http:
+          path: slack/events
+          method: post
+
