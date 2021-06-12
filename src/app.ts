@@ -1,7 +1,11 @@
 import {App, ExpressReceiver} from '@slack/bolt';
 import serverlessExpress from '@vendia/serverless-express';
 import {getPlaceList, createItem} from './util/notion';
-import {CALLBACK_ID_ADD_ITEM, generateModalAddItemView} from './util/slack';
+import {
+    CALLBACK_ID_ADD_ITEM,
+    getItemInfo,
+    generateModalAddItemView
+} from './util/slack';
 
 // カスタムのレシーバーを初期化します
 const expressReceiver = new ExpressReceiver(
@@ -43,14 +47,12 @@ app.command('/add', async ({ack, body, say, context}) => {
     }
 });
 
-app.view(`${CALLBACK_ID_ADD_ITEM}`, async ({ack, view, client, body}) => {
+app.view(CALLBACK_ID_ADD_ITEM, async ({ack, view, client, body}) => {
     await ack();
 
     try {
         const values = view.state.values;
-        const itemName = values['block_name']['action_name'].value!;
-        const itemPlace = values['block_place']['action_place'].selected_option?.value!;
-
+        const [itemName, itemPlace] = getItemInfo(values);
         await createItem(itemName, itemPlace);
 
         await client.chat.postMessage(
