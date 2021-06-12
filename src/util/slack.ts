@@ -1,6 +1,6 @@
 import {Option, View} from '@slack/bolt';
 
-export const CALLBACK_ID = "modal-add-item-view"
+export const CALLBACK_ID_ADD_ITEM = "callback_add_item"
 
 export function generateModalAddItemView(placeList: string[]): View {
 
@@ -19,7 +19,7 @@ export function generateModalAddItemView(placeList: string[]): View {
 
     return {
         "type": "modal",
-        "callback_id": `${CALLBACK_ID}`,
+        "callback_id": `${CALLBACK_ID_ADD_ITEM}`,
         "title": {
             "type": "plain_text",
             "text": "買い物リストに追加する"
