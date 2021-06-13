@@ -24,64 +24,64 @@ export class SlackMapper {
     ): View {
         function generateOption(place: string): Option {
             return {
-                "text": {
-                    "type": "plain_text",
-                    "text": `${place}`,
-                    "emoji": true
+                'text': {
+                    'type': 'plain_text',
+                    'text': place,
+                    'emoji': true
                 },
-                "value": `${place}`
+                'value': place
             };
         }
 
         const options = placeList.map(value => generateOption(value));
 
         return {
-            "type": "modal",
-            "callback_id": CALLBACK_ID_ADD_ITEM,
-            "title": {
-                "type": "plain_text",
-                "text": "買い物リストに追加する"
+            'type': 'modal',
+            'callback_id': CALLBACK_ID_ADD_ITEM,
+            'title': {
+                'type': 'plain_text',
+                'text': '買い物リストに追加する'
             },
-            "blocks": [
+            'blocks': [
                 {
-                    "type": "input",
-                    "block_id": BLOCK_ID_NAME,
-                    "label": {
-                        "type": "plain_text",
-                        "text": "名前"
+                    'type': 'input',
+                    'block_id': BLOCK_ID_NAME,
+                    'label': {
+                        'type': 'plain_text',
+                        'text': '名前'
                     },
-                    "element": {
-                        "type": "plain_text_input",
-                        "action_id": ACTION_ID_NAME,
-                        "placeholder": {
-                            "type": "plain_text",
-                            "text": "例）牛乳"
+                    'element': {
+                        'type': 'plain_text_input',
+                        'action_id': ACTION_ID_NAME,
+                        'placeholder': {
+                            'type': 'plain_text',
+                            'text': '例）牛乳'
                         }
                     }
                 },
                 {
-                    "type": "input",
-                    "block_id": BLOCK_ID_PLACE,
-                    "label": {
-                        "type": "plain_text",
-                        "text": "場所",
-                        "emoji": true
+                    'type': 'input',
+                    'block_id': BLOCK_ID_PLACE,
+                    'label': {
+                        'type': 'plain_text',
+                        'text': '場所',
+                        'emoji': true
                     },
-                    "element": {
-                        "type": "static_select",
-                        "action_id": ACTION_ID_PLACE,
-                        "placeholder": {
-                            "type": "plain_text",
-                            "text": "例）冷蔵庫",
-                            "emoji": true
+                    'element': {
+                        'type': 'static_select',
+                        'action_id': ACTION_ID_PLACE,
+                        'placeholder': {
+                            'type': 'plain_text',
+                            'text': '例）冷蔵庫',
+                            'emoji': true
                         },
-                        "options": options
+                        'options': options
                     }
                 }
             ],
-            "submit": {
-                "type": "plain_text",
-                "text": "Submit"
+            'submit': {
+                'type': 'plain_text',
+                'text': 'Submit'
             }
         };
     }
