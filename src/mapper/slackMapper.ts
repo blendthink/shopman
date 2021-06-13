@@ -1,4 +1,4 @@
-import {ViewOutput, ViewStateValue} from '@slack/bolt/dist/types/view';
+import {ViewOutput} from '@slack/bolt/dist/types/view';
 import {Item} from '../data/item';
 import {Block, HeaderBlock, InputBlock, Option, View} from '@slack/bolt';
 import {
@@ -99,7 +99,7 @@ export class SlackMapper {
                 emoji: true
             }
         };
-        blocks.push(headerBlock)
+        blocks.push(headerBlock);
 
         const places = Array.from(new Set(items.map(value => value.place)));
 
@@ -130,7 +130,7 @@ export class SlackMapper {
                     options: options
                 }
             };
-            blocks.push(inputCheckboxesBlock)
+            blocks.push(inputCheckboxesBlock);
         });
 
         return blocks;
