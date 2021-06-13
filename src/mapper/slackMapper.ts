@@ -1,4 +1,4 @@
-import {ViewOutput} from '@slack/bolt/dist/types/view';
+import {ViewOutput, ViewStateValue} from '@slack/bolt/dist/types/view';
 import {Item} from '../data/item';
 import {Block, HeaderBlock, InputBlock, Option, View} from '@slack/bolt';
 import {
@@ -89,6 +89,20 @@ export class SlackMapper {
     static toItemsBlocks(
         items: Item[]
     ): Block[] {
+        const blocks: Block[] = [];
+
+        const headerBlock: HeaderBlock = {
+            type: "header",
+            text: {
+                type: "plain_text",
+                text: "買い物リスト",
+                emoji: true
+            }
+        };
+        blocks.push(headerBlock)
+
+        const places = Array.from(new Set(items.map(value => value.place)));
+
         function generateOption(item: Item): Option {
             return {
                 text: {
@@ -100,33 +114,25 @@ export class SlackMapper {
             };
         }
 
-        const options = items.map(value => generateOption(value));
+        // 場所ごとにチェックボックス群を作成
+        places.forEach(place => {
+            const placeItems = items.filter(item => item.place === place);
+            const options = placeItems.map(placeItem => generateOption(placeItem));
+            const inputCheckboxesBlock: InputBlock = {
+                type: 'input',
+                label: {
+                    type: 'plain_text',
+                    text: place,
+                    emoji: true
+                },
+                element: {
+                    type: 'checkboxes',
+                    options: options
+                }
+            };
+            blocks.push(inputCheckboxesBlock)
+        });
 
-        const headerBlock: HeaderBlock = {
-            type: "header",
-            text: {
-                type: "plain_text",
-                text: "買い物リスト",
-                emoji: true
-            }
-        };
-
-        const inputCheckboxesBlock: InputBlock = {
-            type: 'input',
-            label: {
-                type: 'plain_text',
-                text: '買い物リスト',
-                emoji: true
-            },
-            element: {
-                type: 'checkboxes',
-                options: options
-            }
-        };
-
-        return [
-            headerBlock,
-            inputCheckboxesBlock
-        ];
+        return blocks;
     }
 }
