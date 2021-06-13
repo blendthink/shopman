@@ -1,14 +1,12 @@
 import {ViewOutput} from '@slack/bolt/dist/types/view';
 import {Item} from '../data/item';
-import {Block, Option, SectionBlock, View} from '@slack/bolt';
+import {Block, HeaderBlock, InputBlock, Option, View} from '@slack/bolt';
 import {
-    ACTION_ID_CHECKBOXES,
-    ACTION_ID_NAME, ACTION_ID_PLACE, BLOCK_ID_CHECKBOXES,
+    ACTION_ID_NAME, ACTION_ID_PLACE,
     BLOCK_ID_NAME,
     BLOCK_ID_PLACE,
     CALLBACK_ID_ADD_ITEM
 } from '../const/slackConst';
-import {ActionsBlock} from '@slack/types';
 
 export class SlackMapper {
 
@@ -104,30 +102,31 @@ export class SlackMapper {
 
         const options = items.map(value => generateOption(value));
 
-        const sectionBlock: SectionBlock = {
-            type: "section",
+        const headerBlock: HeaderBlock = {
+            type: "header",
             text: {
                 type: "plain_text",
-                text: "購入したら :white_check_mark: を入れてね",
+                text: "買い物リスト",
                 emoji: true
             }
-        }
+        };
 
-        const actionsBlock: ActionsBlock = {
-            type: 'actions',
-            block_id: BLOCK_ID_CHECKBOXES,
-            elements: [
-                {
-                    action_id: ACTION_ID_CHECKBOXES,
-                    type: 'checkboxes',
-                    options: options
-                }
-            ]
+        const inputCheckboxesBlock: InputBlock = {
+            type: 'input',
+            label: {
+                type: 'plain_text',
+                text: '買い物リスト',
+                emoji: true
+            },
+            element: {
+                type: 'checkboxes',
+                options: options
+            }
         };
 
         return [
-            sectionBlock,
-            actionsBlock
+            headerBlock,
+            inputCheckboxesBlock
         ];
     }
 }
