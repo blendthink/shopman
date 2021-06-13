@@ -76,7 +76,7 @@ app.view(CALLBACK_ID_ADD_ITEM, async ({ack, view, client, body}) => {
 
         await client.chat.postMessage(
             {
-                channel: `${body.user.id}`,
+                channel: body.user.id,
                 text: '登録しました'
             }
         );
@@ -84,7 +84,7 @@ app.view(CALLBACK_ID_ADD_ITEM, async ({ack, view, client, body}) => {
     } catch (error) {
         await client.chat.postMessage(
             {
-                channel: `${body.user.id}`,
+                channel: body.user.id,
                 text: `エラー：${error}`
             }
         );

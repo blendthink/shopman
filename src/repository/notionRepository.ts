@@ -40,7 +40,7 @@ export class NotionRepository {
                             {
                                 type: 'text',
                                 text: {
-                                    content: `${name}`
+                                    content: name
                                 }
                             }
                         ]
@@ -49,7 +49,7 @@ export class NotionRepository {
                         type: 'select',
                         // @ts-ignore
                         select: {
-                            name: `${place}`
+                            name: place
                         }
                     }
                 }
