@@ -4,6 +4,3 @@ export const BLOCK_ID_NAME = 'block_name';
 export const ACTION_ID_NAME = 'action_name';
 export const BLOCK_ID_PLACE = 'block_place';
 export const ACTION_ID_PLACE = 'action_place';
-
-export const BLOCK_ID_CHECKBOXES = 'block_checkboxes';
-export const ACTION_ID_CHECKBOXES = 'action_checkboxes';
