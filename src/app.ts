@@ -1,25 +1,16 @@
 import {App, ExpressReceiver} from '@slack/bolt';
 import serverlessExpress from '@vendia/serverless-express';
-import {getPlaceList, createItem} from './util/notion';
-import {
-    CALLBACK_ID_ADD_ITEM,
-    getItemInfo,
-    generateModalAddItemView
-} from './util/slack';
+import {SlackMapper} from './mapper/slackMapper';
+import {NotionRepository} from './repository/notionRepository';
+import {CALLBACK_ID_ADD_ITEM} from './const/slackConst';
 
-// カスタムのレシーバーを初期化します
 const expressReceiver = new ExpressReceiver(
     {
         signingSecret: process.env.SLACK_SIGNING_SECRET!,
-        // `processBeforeResponse` オプションは、あらゆる FaaS 環境で必須です。
-        // このオプションにより、Bolt フレームワークが `ack()` などでリクエストへの応答を返す前に
-        // `app.message` などのメソッドが Slack からのリクエストを処理できるようになります。FaaS では
-        // 応答を返した後にハンドラーがただちに終了してしまうため、このオプションの指定が重要になります。
         processBeforeResponse: true,
     }
 );
 
-// ボットトークンと、AWS Lambda に対応させたレシーバーを使ってアプリを初期化します。
 const app = new App(
     {
         token: process.env.SLACK_BOT_TOKEN,
@@ -27,15 +18,42 @@ const app = new App(
     }
 );
 
-app.command('/add', async ({ack, body, say, context}) => {
+app.command('/list', async ({ack, say}) => {
+    await ack();
+
+    try {
+        await say('List');
+        // mapper res = await notionClient.databases.query({
+        //   database_id: process.env.DATABASE_ID!,
+        //   filter: {
+        //     property: 'Place',
+        //     select: {
+        //       equals: 'other',
+        //     },
+        //   },
+        // });
+        // mapper items = res.results;
+        // mapper firstItem = items[0];
+        // mapper pageName = getPageName(firstItem)
+        // mapper pagePlace = getPagePlace(firstItem)
+        // mapper pageAssign = getPageAssign(firstItem)
+        // await say(`名前：${pageName} 場所：${pagePlace} 人：${pageAssign}`);
+    } catch (e) {
+        await say(`error: ${e}`);
+    }
+});
+
+app.command('/add', async ({ack, body, say, context, client}) => {
     await ack();
 
     try {
 
-        const placeList = await getPlaceList();
-        const modalAddItemView = generateModalAddItemView(placeList);
+        const notionRepository = new NotionRepository();
+        const placeList = await notionRepository.getPlaceList();
 
-        await app.client.views.open(
+        const modalAddItemView = SlackMapper.toModalAddItemView(placeList);
+
+        await client.views.open(
             {
                 token: context.botToken,
                 trigger_id: body.trigger_id,
@@ -51,9 +69,10 @@ app.view(CALLBACK_ID_ADD_ITEM, async ({ack, view, client, body}) => {
     await ack();
 
     try {
-        const values = view.state.values;
-        const [itemName, itemPlace] = getItemInfo(values);
-        await createItem(itemName, itemPlace);
+        const item = SlackMapper.toItem(view);
+
+        const notionRepository = new NotionRepository();
+        await notionRepository.createItem(item.name, item.place);
 
         await client.chat.postMessage(
             {
