@@ -1,12 +1,14 @@
 import {ViewOutput} from '@slack/bolt/dist/types/view';
 import {Item} from '../data/item';
-import {Option, View} from '@slack/bolt';
+import {Block, Option, SectionBlock, View} from '@slack/bolt';
 import {
-    ACTION_ID_NAME, ACTION_ID_PLACE,
+    ACTION_ID_CHECKBOXES,
+    ACTION_ID_NAME, ACTION_ID_PLACE, BLOCK_ID_CHECKBOXES,
     BLOCK_ID_NAME,
     BLOCK_ID_PLACE,
     CALLBACK_ID_ADD_ITEM
 } from '../const/slackConst';
+import {ActionsBlock} from '@slack/types';
 
 export class SlackMapper {
 
@@ -84,5 +86,48 @@ export class SlackMapper {
                 text: 'Submit'
             }
         };
+    }
+
+    static toItemsBlocks(
+        items: Item[]
+    ): Block[] {
+        function generateOption(item: Item): Option {
+            return {
+                text: {
+                    type: 'plain_text',
+                    text: item.name,
+                    emoji: true
+                },
+                value: item.name
+            };
+        }
+
+        const options = items.map(value => generateOption(value));
+
+        const sectionBlock: SectionBlock = {
+            type: "section",
+            text: {
+                type: "plain_text",
+                text: "購入したら :white_check_mark: を入れてね",
+                emoji: true
+            }
+        }
+
+        const actionsBlock: ActionsBlock = {
+            type: 'actions',
+            block_id: BLOCK_ID_CHECKBOXES,
+            elements: [
+                {
+                    action_id: ACTION_ID_CHECKBOXES,
+                    type: 'checkboxes',
+                    options: options
+                }
+            ]
+        };
+
+        return [
+            sectionBlock,
+            actionsBlock
+        ];
     }
 }

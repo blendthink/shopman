@@ -24,22 +24,13 @@ app.command('/list', async ({ack, say}) => {
     await ack();
 
     try {
-        await say('List');
-        // mapper res = await notionClient.databases.query({
-        //   database_id: process.env.DATABASE_ID!,
-        //   filter: {
-        //     property: 'Place',
-        //     select: {
-        //       equals: 'other',
-        //     },
-        //   },
-        // });
-        // mapper items = res.results;
-        // mapper firstItem = items[0];
-        // mapper pageName = getPageName(firstItem)
-        // mapper pagePlace = getPagePlace(firstItem)
-        // mapper pageAssign = getPageAssign(firstItem)
-        // await say(`名前：${pageName} 場所：${pagePlace} 人：${pageAssign}`);
+        const items = await notionRepository.getItems();
+        const blocks = SlackMapper.toItemsBlocks(items);
+        await say(
+            {
+                blocks: blocks
+            }
+        );
     } catch (e) {
         await say(`error: ${e}`);
     }

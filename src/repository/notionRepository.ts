@@ -1,6 +1,8 @@
 import {Client} from '@notionhq/client';
 import {SelectProperty} from '@notionhq/client/build/src/api-types';
 import {AssertionError} from 'assert';
+import {Item} from '../data/item';
+import {NotionMapper} from '../mapper/notionMapper';
 
 export class NotionRepository {
 
@@ -9,6 +11,17 @@ export class NotionRepository {
             auth: process.env.NOTION_TOKEN,
         }
     );
+
+    async getItems(): Promise<Item[]> {
+        const res = await this.notionClient.databases.query(
+            {
+                database_id: process.env.DATABASE_ID!
+            }
+        );
+
+        const pages = res.results;
+        return NotionMapper.toItems(pages);
+    }
 
     async getPlaceList(): Promise<string[]> {
         const res = await this.notionClient.databases.retrieve(
