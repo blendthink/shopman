@@ -18,6 +18,8 @@ const app = new App(
     }
 );
 
+const notionRepository = new NotionRepository();
+
 app.command('/list', async ({ack, say}) => {
     await ack();
 
@@ -47,8 +49,6 @@ app.command('/add', async ({ack, body, say, context, client}) => {
     await ack();
 
     try {
-
-        const notionRepository = new NotionRepository();
         const placeList = await notionRepository.getPlaceList();
 
         const modalAddItemView = SlackMapper.toModalAddItemView(placeList);
@@ -71,7 +71,6 @@ app.view(CALLBACK_ID_ADD_ITEM, async ({ack, view, client, body}) => {
     try {
         const item = SlackMapper.toItem(view);
 
-        const notionRepository = new NotionRepository();
         await notionRepository.createItem(item.name, item.place);
 
         await client.chat.postMessage(
