@@ -1,3 +1,5 @@
+// noinspection NonAsciiCharacters
+
 import {Client} from '@notionhq/client';
 import {SelectProperty} from '@notionhq/client/build/src/api-types';
 import {AssertionError} from 'assert';
@@ -15,7 +17,13 @@ export class NotionRepository {
     async getItems(): Promise<Item[]> {
         const res = await this.notionClient.databases.query(
             {
-                database_id: process.env.DATABASE_ID!
+                database_id: process.env.DATABASE_ID!,
+                filter: {
+                    property: '購入済',
+                    checkbox: {
+                        equals: false
+                    }
+                }
             }
         );
 
